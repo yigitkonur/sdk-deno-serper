@@ -1,5 +1,5 @@
 {
   "imports": {
-    "@yigitkonur/serper-deno-sdk": "jsr:@yigitkonur/serper-deno-sdk@0.1.0"
+    "@yigitkonur/sdk-deno-serper": "jsr:@yigitkonur/sdk-deno-serper@0.1.0"
   }
 }

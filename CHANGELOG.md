@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initial release of @yigitkonur/serper-deno-sdk
+- Initial release of @yigitkonur/sdk-deno-serper
 - `SerperClient` class with secure API key handling
 - Complete TypeScript type definitions for all endpoints
 
@@ -61,5 +61,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Full test coverage
 - JSR publishing ready
 
-[Unreleased]: https://github.com/yigitkonur/serper-deno-sdk/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/yigitkonur/serper-deno-sdk/releases/tag/v1.0.0
+[Unreleased]: https://github.com/yigitkonur/sdk-deno-serper/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/yigitkonur/sdk-deno-serper/releases/tag/v1.0.0

@@ -3,7 +3,7 @@
 //   -H "Content-Type: application/json" \
 //   -d '{"query": "electric vehicle battery"}'
 
-import { SerperClient } from "jsr:@yigitkonur/serper-deno-sdk@1.0.1";
+import { SerperClient } from "jsr:@yigitkonur/sdk-deno-serper@1.0.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",

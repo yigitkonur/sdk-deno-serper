@@ -44,7 +44,7 @@ import { BASE_URL, DEFAULT_TIMEOUT } from "./constants.ts";
  *
  * @example Basic usage
  * ```ts
- * import { SerperClient } from "@yigitkonur/serper-deno-sdk";
+ * import { SerperClient } from "@yigitkonur/sdk-deno-serper";
  *
  * const client = new SerperClient({
  *   apiKey: Deno.env.get("SERPER_API_KEY")!
@@ -66,7 +66,7 @@ import { BASE_URL, DEFAULT_TIMEOUT } from "./constants.ts";
  *
  * @example In Supabase Edge Function
  * ```ts
- * import { SerperClient } from "@yigitkonur/serper-deno-sdk";
+ * import { SerperClient } from "@yigitkonur/sdk-deno-serper";
  *
  * const client = new SerperClient({
  *   apiKey: Deno.env.get("SERPER_API_KEY")!

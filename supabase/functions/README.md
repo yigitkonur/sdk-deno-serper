@@ -207,6 +207,6 @@ supabase functions logs serper-web-search
 
 ## Support
 
-- SDK Documentation: https://jsr.io/@yigitkonur/serper-deno-sdk
+- SDK Documentation: https://jsr.io/@yigitkonur/sdk-deno-serper
 - Serper API Docs: https://serper.dev/docs
 - Supabase Docs: https://supabase.com/docs/guides/functions
