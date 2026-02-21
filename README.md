@@ -1,258 +1,164 @@
-# @yigitkonur/serper-deno-sdk
-
-> Type-safe Deno SDK for Serper.dev Google Search API
-
-[![JSR](https://jsr.io/badges/@yigitkonur/serper-deno-sdk)](https://jsr.io/@yigitkonur/serper-deno-sdk)
-[![JSR Score](https://jsr.io/badges/@yigitkonur/serper-deno-sdk/score)](https://jsr.io/@yigitkonur/serper-deno-sdk)
-
-## Features
-
-- 🔍 **Complete API Coverage** - Web, Images, News, Videos, Shopping, Maps, Scholar, Patents
-- 🦕 **Built for Deno** - Works in Deno CLI and Supabase Edge Functions
-- 📦 **Zero Dependencies** - Only uses Web standard APIs
-- 🔒 **Secure** - API key never exposed, proper error handling
-- 📘 **Fully Typed** - Complete TypeScript definitions
-
-## Installation
-
-```bash
-deno add @yigitkonur/serper-deno-sdk
-```
-
-Or import directly:
+type-safe Deno client for the Serper.dev Google Search API. ten endpoints, zero dependencies, strict TypeScript throughout.
 
 ```ts
 import { SerperClient } from "jsr:@yigitkonur/serper-deno-sdk";
+
+const client = new SerperClient({ apiKey: Deno.env.get("SERPER_API_KEY")! });
+const results = await client.search("your query");
 ```
 
-## Quick Start
+[![JSR](https://jsr.io/badges/@yigitkonur/serper-deno-sdk)](https://jsr.io/@yigitkonur/serper-deno-sdk)
+[![deno](https://img.shields.io/badge/deno-2.x-93450a.svg?style=flat-square)](https://deno.land/)
+[![license](https://img.shields.io/badge/license-MIT-grey.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+
+---
+
+## what it does
+
+- **10 search endpoints** — web, images, news, videos, shopping, maps, reviews, scholar, patents, autocomplete
+- **zero runtime dependencies** — only web standard APIs (`fetch`, `AbortController`)
+- **strict types** — readonly result arrays, `noUncheckedIndexedAccess`, true private fields via `#`
+- **typed error hierarchy** — auth, rate limit, validation, server errors with proper `instanceof` chains
+- **timeout + abort** — configurable per-client, defaults to 30s
+- **default merging** — set country/language once on the client, override per-request
+
+## install
+
+```bash
+deno add jsr:@yigitkonur/serper-deno-sdk
+```
+
+or import directly without install:
 
 ```ts
-import { SerperClient } from "@yigitkonur/serper-deno-sdk";
+import { SerperClient } from "jsr:@yigitkonur/serper-deno-sdk@1.0.2";
+```
 
-// Create a client with your API key
+## usage
+
+### web search
+
+```ts
+const results = await client.search("rust async runtime", {
+  num: 5,
+  gl: "us",
+  tbs: "qdr:w", // past week
+});
+```
+
+### images
+
+```ts
+const images = await client.searchImages("aurora borealis", { safe: "active" });
+```
+
+### news / videos / shopping
+
+```ts
+const news = await client.searchNews("deno 2.0");
+const videos = await client.searchVideos("systems programming");
+const shopping = await client.searchShopping("mechanical keyboard");
+```
+
+### maps + reviews
+
+```ts
+const places = await client.searchMaps("coffee shops", { location: "Brooklyn, NY" });
+const reviews = await client.getReviews({ placeId: "ChIJ..." });
+```
+
+### scholar + patents
+
+```ts
+const papers = await client.searchScholar("transformer architecture", {
+  as_ylo: 2023, // published after 2023
+});
+const patents = await client.searchPatents("solid state battery");
+```
+
+### autocomplete
+
+```ts
+const suggestions = await client.autocomplete("how to");
+```
+
+## endpoints
+
+| method | endpoint | description |
+|:---|:---|:---|
+| `search` | `/search` | web search (organic, knowledge graph, answer box, people also ask) |
+| `searchImages` | `/images` | image results with dimensions and source |
+| `searchNews` | `/news` | news articles with source and date |
+| `searchVideos` | `/videos` | video results (YouTube, etc.) |
+| `searchShopping` | `/shopping` | products with price and seller |
+| `searchMaps` | `/maps` | local businesses with lat/lng, rating, phone |
+| `searchPlaces` | `/maps` | alias for `searchMaps` |
+| `getReviews` | `/reviews` | place reviews with ratings and pagination |
+| `searchScholar` | `/scholar` | academic papers with optional PDF links |
+| `searchPatents` | `/patents` | patent filings with abstract and publication date |
+| `autocomplete` | `/autocomplete` | search suggestions |
+
+## client options
+
+```ts
 const client = new SerperClient({
-  apiKey: Deno.env.get("SERPER_API_KEY")!,
-});
-
-// Perform a web search
-const results = await client.search("Deno runtime");
-
-// Access organic results
-for (const result of results.organic) {
-  console.log(result.title, result.link);
-}
-```
-
-## Configuration
-
-```ts
-const client = new SerperClient({
-  apiKey: "your-api-key", // Required
-  baseUrl: "https://...", // Optional: custom endpoint
-  defaultCountry: "us", // Optional: default country code
-  defaultLanguage: "en", // Optional: default language code
-  timeout: 30000, // Optional: request timeout (ms)
+  apiKey: "...",              // required
+  baseUrl: "...",             // default: https://google.serper.dev
+  defaultCountry: "us",      // applied as `gl` to all requests
+  defaultLanguage: "en",     // applied as `hl` to all requests
+  timeout: 15_000,           // ms, default: 30_000
 });
 ```
 
-## API Reference
+per-request options override client defaults.
 
-### Web Search
-
-```ts
-const results = await client.search("TypeScript tutorial", {
-  gl: "us", // Country
-  hl: "en", // Language
-  num: 20, // Number of results
-  tbs: "qdr:d", // Past day
-});
-
-console.log(results.organic); // Organic results
-console.log(results.knowledgeGraph); // Knowledge Graph (if present)
-console.log(results.answerBox); // Featured snippet (if present)
-console.log(results.peopleAlsoAsk); // Related questions
-```
-
-### Image Search
-
-```ts
-const images = await client.searchImages("sunset beach", {
-  num: 15,
-  safe: "active",
-});
-
-for (const img of images.images) {
-  console.log(img.imageUrl, img.source);
-}
-```
-
-### News Search
-
-```ts
-const news = await client.searchNews("AI technology", { gl: "us" });
-
-for (const article of news.news) {
-  console.log(`${article.source}: ${article.title}`);
-}
-```
-
-### Video Search
-
-```ts
-const videos = await client.searchVideos("TypeScript tutorial");
-
-for (const video of videos.videos) {
-  console.log(`${video.title} (${video.duration})`);
-}
-```
-
-### Shopping Search
-
-```ts
-const products = await client.searchShopping("wireless headphones");
-
-for (const item of products.shopping) {
-  console.log(`${item.title}: ${item.price}`);
-}
-```
-
-### Maps/Places Search
-
-```ts
-const places = await client.searchMaps("coffee shops", {
-  location: "San Francisco, CA",
-});
-
-for (const place of places.places) {
-  console.log(`${place.title} - ${place.rating}⭐`);
-}
-```
-
-### Place Reviews
-
-```ts
-// Using Place ID (recommended)
-const reviews = await client.getReviews({
-  placeId: "ChIJxxxxxxxxxxxxxxxxx",
-  limit: 10,
-});
-
-// Or using place name
-const reviews = await client.getReviews({
-  q: "Starbucks Times Square",
-});
-
-for (const review of reviews.reviews) {
-  console.log(`${review.author}: ${review.rating}⭐`);
-}
-```
-
-### Scholar Search
-
-```ts
-const papers = await client.searchScholar("machine learning", {
-  as_ylo: 2020, // From year
-  num: 10,
-});
-
-for (const paper of papers.organic) {
-  console.log(paper.title, paper.publicationInfo);
-}
-```
-
-### Patents Search
-
-```ts
-const patents = await client.searchPatents("solar panel efficiency");
-
-for (const patent of patents.organic) {
-  console.log(patent.patentNumber, patent.title);
-}
-```
-
-### Autocomplete
-
-```ts
-const suggestions = await client.autocomplete("how to le");
-console.log(suggestions.suggestions);
-// [{ value: "how to learn programming" }, { value: "how to learn python" }, ...]
-```
-
-## Error Handling
+## error handling
 
 ```ts
 import {
   SerperAuthError,
-  SerperClient,
   SerperRateLimitError,
-  SerperServerError,
   SerperValidationError,
-} from "@yigitkonur/serper-deno-sdk";
+  SerperServerError,
+} from "jsr:@yigitkonur/serper-deno-sdk";
 
 try {
-  const results = await client.search("query");
-} catch (error) {
-  if (error instanceof SerperAuthError) {
-    // 401 - Invalid API key
-    console.error("Check your API key");
-  } else if (error instanceof SerperRateLimitError) {
-    // 429 - Rate limit exceeded
-    console.error("Rate limit exceeded, retry later");
-  } else if (error instanceof SerperValidationError) {
-    // 400 - Invalid parameters
-    console.error("Invalid search parameters");
-  } else if (error instanceof SerperServerError) {
-    // 500+ - Server error
-    console.error("Server error, retry later");
+  await client.search("query");
+} catch (e) {
+  if (e instanceof SerperRateLimitError) {
+    // 429 — back off
+  } else if (e instanceof SerperAuthError) {
+    // 401/403 — bad key
+  } else if (e instanceof SerperValidationError) {
+    // 4xx or empty query
+  } else if (e instanceof SerperServerError) {
+    // 5xx, timeout, network
   }
 }
 ```
 
-## Supabase Edge Functions
+all errors extend `SerperError` which extends `Error`. each carries a `.status` number.
 
-```ts
-import { SerperClient } from "@yigitkonur/serper-deno-sdk";
+## supabase edge functions
 
-const client = new SerperClient({
-  apiKey: Deno.env.get("SERPER_API_KEY")!,
-});
+the repo includes 10 ready-to-deploy Supabase Edge Functions in `supabase/functions/`, one per endpoint. import map points to JSR:
 
-Deno.serve(async (req) => {
-  try {
-    const { query } = await req.json();
-    const results = await client.search(query);
-    return Response.json(results);
-  } catch (error) {
-    return Response.json(
-      { error: "Search failed" },
-      { status: 500 },
-    );
-  }
-});
+```json
+{ "imports": { "@yigitkonur/serper-deno-sdk": "jsr:@yigitkonur/serper-deno-sdk@1.0.2" } }
 ```
 
-## Types
-
-All types are exported for use in your application:
-
-```ts
-import type {
-  ImageResult,
-  NewsResult,
-  OrganicResult,
-  PlaceResult,
-  SearchResult,
-  // ... and more
-} from "@yigitkonur/serper-deno-sdk";
+```bash
+supabase functions deploy serper-web-search
 ```
 
-## Links
+## development
 
-- [Serper.dev](https://serper.dev) - Get your API key
-- [API Documentation](https://serper.dev/docs) - Official API docs
-- [JSR Package](https://jsr.io/@yigitkonur/serper-deno-sdk) - Package registry
+```bash
+deno task all         # fmt + lint + check + test
+deno task test        # run tests
+deno task bump:patch  # bump version, commit, tag
+```
 
-## License
+## license
 
 MIT
