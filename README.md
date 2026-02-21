@@ -1,13 +1,13 @@
 type-safe Deno client for the Serper.dev Google Search API. ten endpoints, zero dependencies, strict TypeScript throughout.
 
 ```ts
-import { SerperClient } from "jsr:@yigitkonur/serper-deno-sdk";
+import { SerperClient } from "jsr:@yigitkonur/sdk-deno-serper";
 
 const client = new SerperClient({ apiKey: Deno.env.get("SERPER_API_KEY")! });
 const results = await client.search("your query");
 ```
 
-[![JSR](https://jsr.io/badges/@yigitkonur/serper-deno-sdk)](https://jsr.io/@yigitkonur/serper-deno-sdk)
+[![JSR](https://jsr.io/badges/@yigitkonur/sdk-deno-serper)](https://jsr.io/@yigitkonur/sdk-deno-serper)
 [![deno](https://img.shields.io/badge/deno-2.x-93450a.svg?style=flat-square)](https://deno.land/)
 [![license](https://img.shields.io/badge/license-MIT-grey.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
@@ -25,13 +25,13 @@ const results = await client.search("your query");
 ## install
 
 ```bash
-deno add jsr:@yigitkonur/serper-deno-sdk
+deno add jsr:@yigitkonur/sdk-deno-serper
 ```
 
 or import directly without install:
 
 ```ts
-import { SerperClient } from "jsr:@yigitkonur/serper-deno-sdk@1.0.2";
+import { SerperClient } from "jsr:@yigitkonur/sdk-deno-serper@1.0.2";
 ```
 
 ## usage
@@ -120,7 +120,7 @@ import {
   SerperRateLimitError,
   SerperValidationError,
   SerperServerError,
-} from "jsr:@yigitkonur/serper-deno-sdk";
+} from "jsr:@yigitkonur/sdk-deno-serper";
 
 try {
   await client.search("query");
@@ -144,7 +144,7 @@ all errors extend `SerperError` which extends `Error`. each carries a `.status` 
 the repo includes 10 ready-to-deploy Supabase Edge Functions in `supabase/functions/`, one per endpoint. import map points to JSR:
 
 ```json
-{ "imports": { "@yigitkonur/serper-deno-sdk": "jsr:@yigitkonur/serper-deno-sdk@1.0.2" } }
+{ "imports": { "@yigitkonur/sdk-deno-serper": "jsr:@yigitkonur/sdk-deno-serper@1.0.2" } }
 ```
 
 ```bash
